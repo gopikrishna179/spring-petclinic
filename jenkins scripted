@@ -1,0 +1,9 @@
+node {
+    stage('test') {
+        sh 'echo devops'
+    }
+    stage('learning') {
+        git url: 'https://github.com/Manipavan98/spring-petclinic.git',
+            branch: 'main'
+    }
+}
