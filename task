@@ -20,12 +20,9 @@ pipeline {
                            }
             stage ('Exec Maven') {
             steps {
-                rtMavenRun (
                     tool: "Maven 3.6.3", // Tool name from Jenkins configuration
                     pom: 'pom.xml',
                     goals: 'package',
-                    deployerId: "MAVEN_DEPLOYER"
-                )
             }
         }
        }
