@@ -17,15 +17,9 @@ pipeline {
               branch: "${params.BRACH_TO_BUILD}"
                 //branch: 'main'
                 }
-                           }
-            stage ('Exec Maven') {
-            steps {
-                    tool: "Maven 3.6.3", // Tool name from Jenkins configuration
-                    pom: 'pom.xml',
-                    goals: 'package',
+                        
             }
         }
-       }
       post  {
         always {
             echo 'Job completed'
