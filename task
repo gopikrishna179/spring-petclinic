@@ -1,0 +1,49 @@
+pipeline {
+       agent { label 'node1' }
+       parameters {
+           string(name: 'MAVEN_GOAL', defaultValue: 'mvn package', description: 'To build maven')
+           choice(name: 'BRACH_TO_BUILD', choices: ['main'], description: 'Choose the branch')
+                  }
+       triggers {
+           pollSCM ('* * * * *')
+                }
+       stages {
+           stage ('vcs') {
+            steps {
+              mail subject: "Build Started for Jenkins JOB $env.JOB_NAME",
+                   body: "Build Started for Jenkins JOB $env.JOB_NAME",
+                   to: 'manipavan98@gmail.com'
+              git url: 'https://github.com/Manipavan98/spring-petclinic.git',
+              branch: "${params.BRACH_TO_BUILD}"
+                //branch: 'main'
+                }
+                           }
+            stage ('Exec Maven') {
+            steps {
+                rtMavenRun (
+                    tool: "Maven 3.6.3", // Tool name from Jenkins configuration
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER"
+                )
+            }
+        }
+       }
+      post  {
+        always {
+            echo 'Job completed'
+            mail subject: "Build Completed for Jenkins JOB $env.JOB_NAME",
+                    body: "Build Completed for Jenkins JOB $env.JOB_NAME \n Click Here: $env.JOB_URL",
+                  to: 'manipavan98@gmail.com'
+        }
+        failure {
+            mail subject: "Build Failed for Jenkins JOB $env.JOB_NAME with Build ID $env.BUILD_ID",
+                  body: "Build Failed for Jenkins JOB $env.JOB_NAME",
+                  to: 'manipavan98@gmail.com'
+        }
+        success {
+            junit '**/surefire-reports/*.xml'
+            archive '**/target/*.jar'
+        }
+       }
+}
