@@ -1,0 +1,25 @@
+pipeline {
+    agents {label 'jdk11'}
+    stages {
+        stage('clone'){
+            steps {
+                git url : 'https://github.com/Manipavan98/spring-petclinic.git' , branch : 'main'
+                }
+            }
+            stage('build'){
+                steps{
+                    sh 'mvn package'
+                }
+            }
+                stage('archive'){
+                steps{
+                    sh 'target/*.jar'
+                }
+            }
+                stage('publish'){
+                    steps{
+                    sh 'target/surefire-reports/*.xml'
+                }
+            }
+    }
+}
