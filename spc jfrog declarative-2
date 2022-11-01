@@ -1,0 +1,42 @@
+pipeline {
+       agent { label 'jdk11' }
+       parameters {
+           string(name: 'MAVEN_GOAL', defaultValue: 'mvn package', description: 'To build maven')
+           choice(name: 'BRANCH_TO_BUILD', choices: ['main'], description: 'Choose the branch')
+                  }
+       stages {
+           stage ('vcs') {
+            steps {
+              git url: 'https://github.com/Manipavan98/spring-petclinic.git',
+              branch: "${params.BRANCH_TO_BUILD}"
+                //branch: 'main'
+                }
+                           }
+            stage ('artifactory') {
+             steps {
+               rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "JFROG_J",
+                    releaseRepo: "b06-libs-release-local",
+                    snapshotRepo: "b06-libs-snapshot-local"
+                )
+             }
+            }
+            stage ('Exec Maven') {
+            steps {
+                rtMavenRun (
+                    tool: "Maven 3.6.3", // Tool name from Jenkins configuration
+                    pom: 'pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER"
+                )
+            }
+        }
+       }
+      post  {
+        success {
+            junit '**/surefire-reports/*.xml'
+            archiveArtifacts '**/target/*.jar'
+        }
+       }
+}
