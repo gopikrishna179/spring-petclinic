@@ -1,0 +1,8 @@
+pool:
+  name: "Default"
+
+trigger:
+  - main
+
+extends:
+  template: ./Azuredevops/maven/template.yaml

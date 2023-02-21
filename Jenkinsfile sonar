@@ -1,0 +1,17 @@
+pipeline {
+    agent {label 'jdk11'}
+    stages {
+        stage('vcs') {
+            steps {
+                git url: 'https://github.com/Manipavan98/spring-petclinic.git', branch : 'main'
+            }
+        }
+        stage('build') {
+        steps {
+            withSonarQubeEnv('sonarqube') {
+                 sh 'mvn clean package sonar:sonar'
+              }
+           }
+        }
+    }
+}

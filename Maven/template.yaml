@@ -1,0 +1,49 @@
+parameters:
+  - name: goal
+    type: string
+    default: package
+    values:
+      - compile
+      - test
+      - package
+      - install
+      - deploy
+      - clean
+  - name: javaversion
+    type: string
+    default: '1.17'
+    values:
+      - '1.17'
+      - '1.11'
+      - '1.8'
+  - name: jdkdirectory
+    type: string
+    default: /usr/lib/jvm/java-17-openjdk-amd64
+    values:
+      - /usr/lib/jvm/java-17-openjdk-amd64
+      - /usr/lib/jvm/java-11-openjdk-amd64
+      - /usr/lib/jvm/java-8-openjdk-amd64
+  - name: mavendirectory
+    type: string
+    default: /opt/apache-maven-3.8.7/bin/mvn
+    values: 
+      - /opt/apache-maven-3.8.7/bin/mvn
+      - /opt/apache-maven-3.8.4/bin/mvn
+      - /opt/apache-maven-3.9.0/bin/mvn
+
+stages:
+  - stage: Build
+    displayname: Maven build
+    jobs:
+      - job: mavenjob
+        displayName: Maven
+        steps:
+          - task: Maven@3
+            inputs:
+              mavenPOMFile: 'pom.xml'
+              goals: ${{ parameters.goal }}
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              javaHomeOption: ${{ parameters.javaversion }}
+              jdkDirectory: ${{ parameters.jdkdirectory }}
+              mavenDirectory: ${{ parameters.mavendirectory }}
