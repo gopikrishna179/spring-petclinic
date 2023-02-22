@@ -5,4 +5,4 @@ trigger:
   - main
 
 extends:
-  template: ./Azuredevops/maven/template.yaml
+  template: ./spring-petclinic/extends.yaml
