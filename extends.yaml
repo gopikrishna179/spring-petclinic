@@ -5,4 +5,4 @@ trigger:
   - main
 
 extends:
-  template: ./spring-petclinic/extends.yaml
+  template: ./extends.yaml
