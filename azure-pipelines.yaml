@@ -1,0 +1,22 @@
+trigger:
+  - main
+pool:
+  vmImage: ubuntu-latest
+stages:
+  - stage: BuildandPackage
+    displayName: Build and Package
+    jobs:
+      - job: Buildthecode
+        displayName: Build
+        steps:
+          - task: Maven@3
+            inputs:
+              mavenPOMFile: 'pom.xml'
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/TEST-*.xml'
+
+
+
